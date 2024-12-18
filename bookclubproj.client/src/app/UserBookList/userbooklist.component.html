@@ -1,0 +1,9 @@
+<div>
+  <button (click)="loadBooks()">Ваша коллекция</button>
+
+  <ul>
+    <li *ngFor="let book of books">
+      {{ book.title }}
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,8 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:63503",
+"LaunchCommand": "npm start",
+"WorkingDirectory": "C:\\Users\\WEB\\Desktop\\BookClubProj\\BookClubProj.Server\\..\\bookclubproj.client",
+"MaxTimeoutInSeconds": "120"
+}
+}

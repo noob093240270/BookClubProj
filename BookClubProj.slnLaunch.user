@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "Новый профиль",
+    "Projects": [
+      {
+        "Path": "BookClubProj.Server\\BookClubProj.Server.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

@@ -1,0 +1,20 @@
+<div class="login-container">
+  <h2>Вход в книжный клуб</h2>
+
+  <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+    <div>
+      <label for="username">Имя пользователя</label>
+      <input type="text" id="username" [(ngModel)]="name" name="username" required />
+    </div>
+    <div>
+      <label for="password">Пароль</label>
+      <input type="password" id="password" [(ngModel)]="password" name="password" required />
+    </div>
+    <div *ngIf="errorMessage" class="error">
+      <p>{{ errorMessage }}</p>
+    </div>
+    <button type="submit" [disabled]="!loginForm.form.valid">Войти</button>
+  </form>
+  <p>Нет аккаунта? <a routerLink="/register">Зарегистрироваться</a></p>
+
+</div>
