@@ -37,11 +37,11 @@ export class LoginComponent {
             localStorage.setItem('token', res.token);
             this.authService.login(res.token);
           }
-          this.router.navigate(['/books']);
+          this.router.navigate(['/mainpage']);
         },
         error: (err) => {
           console.error('ошибка',err);
-          this.errorMessage = 'неверный логин или пароль';
+          this.errorMessage = 'неверный логин или пароль!';
         }
       }
     );

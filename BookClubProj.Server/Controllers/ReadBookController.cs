@@ -1,4 +1,5 @@
-﻿using BookClubProj.Server.Data;
+﻿using System.Linq;
+using BookClubProj.Server.Data;
 using BookClubProj.Server.Models;
 using BookClubProj.Server.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +21,46 @@ namespace BookClubProj.Server.Controllers
 
         
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserBooks(int userId)
+        [HttpGet("userpage/userbooks")]
+        public async Task<ActionResult> GetUserBooks()
         {
-            var books = await _context.ReadBooks.Where(rb => rb.UserId == userId).ToListAsync();
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
+            if (userIdClaim == null)
+            {
+                return Unauthorized("Не удалось получить идентификатор пользователя");
+            }
+            var userId = int.Parse(userIdClaim.Value);
+
+            var readbooks = await _context.ReadBooks.Where(rb => rb.UserId == userId).ToListAsync();
+            var booksid = readbooks.Select(b => b.BookId).ToList();
+            var books = await _context.Books.Where(b => booksid.Contains(b.Id)).ToListAsync();
+            
+
+            
             return Ok(books);
+        }
+
+        [HttpPost("delete")]
+        public async Task<IActionResult> DeleteUserBook([FromBody] AddedBook addedBook)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
+            if (userIdClaim == null)
+            {
+                return Unauthorized("Не удалось получить идентификатор пользователя");
+            }
+            var userId = int.Parse(userIdClaim.Value);
+
+            var book = await _context.ReadBooks.FirstOrDefaultAsync(b => b.UserId == userId && b.BookId == addedBook.BookId);
+            if (book == null)
+            {
+                return NotFound("Книга не найдена или не принадлежит пользователю");
+            }
+
+            _context.ReadBooks.Remove(book);
+            await _context.SaveChangesAsync();
+            return Ok();
+
+
         }
 
 

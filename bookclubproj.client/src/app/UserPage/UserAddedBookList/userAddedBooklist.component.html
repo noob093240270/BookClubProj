@@ -1,0 +1,19 @@
+<div *ngIf="isLogged">
+  <h2>Добавить книгу</h2>
+  <form (ngSubmit)="addUsersAddedBook()">
+    <label for="title">Название:</label>
+    <input id="title" [(ngModel)]="title" name="title" required maxlength="20">
+    <br>
+    <label for="author">Автор:</label>
+    <input id="author" [(ngModel)]="author" name="author" required maxlength="20">
+    <br>
+    <button type="submit">Добавить</button>
+  </form>
+  <ul>
+    <li *ngFor="let book of books">
+      {{book.title}} <br>
+      <button (click)="deleteUsersAddedBook(book.id)">Удалить книгу</button>
+      <br><br>
+    </li>
+  </ul>
+</div>

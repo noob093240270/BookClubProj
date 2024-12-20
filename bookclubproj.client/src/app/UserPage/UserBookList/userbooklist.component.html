@@ -1,0 +1,9 @@
+<div *ngIf="isLogged">
+  <ul>
+    <li *ngFor="let book of books">
+      {{book.title}} <br>
+      <button (click)="deleteBookFromReadList(book.id)">Удалить книгу</button>
+      <br><br>
+    </li>
+  </ul>
+</div>

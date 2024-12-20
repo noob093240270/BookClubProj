@@ -1,0 +1,10 @@
+<div class="book-list">
+  <h2>Список книг</h2>
+  <div *ngIf="error" class="error">
+    Произошла ошибка при загрузке данных.
+  </div>
+  <div *ngFor="let book of books" class="book-item">
+    <h3>{{ book.title }}</h3>
+    <button (click)="addBookToReadList(book.id)">Добавить себе</button>
+  </div>
+</div>

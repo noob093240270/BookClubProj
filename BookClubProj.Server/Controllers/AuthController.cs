@@ -12,16 +12,29 @@ namespace BookClubProj.Server.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AuthService _authService;
+        private readonly BookClubContext _context;
 
-        public AuthController(AuthService authService)
+        public AuthController(AuthService authService, BookClubContext context)
         {
             _authService = authService;
+            _context = context;
         }
 
 
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterUser user)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Name == user.Name);
+
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("name", "пользователь с таким именем уже существует");
+                return BadRequest(ModelState);
+            }
             try
             {
                 var token = await _authService.RegisterAsync(user.Name, user.Password);
@@ -43,12 +56,15 @@ namespace BookClubProj.Server.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] RegisterUser _user)
         {
+            if (!ModelState.IsValid)
+                { return BadRequest(ModelState); }
             try
             {
                 var isValidPassword = await _authService.ValidateUserPassword(_user.Name, _user.Password);
                 if (!isValidPassword)
                 {
-                    return Unauthorized(new { Message = "Неправильный логин или пароль" });
+                    ModelState.AddModelError("password_or_name", "Неправильный логин или пароль");
+                    return BadRequest(ModelState);
                 }
 
                 var token = await _authService.LoginAsync(_user.Name, _user.Password);

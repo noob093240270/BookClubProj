@@ -1,0 +1,17 @@
+<div class="userpage">
+  <div *ngIf="username">
+    <h2>Профиль</h2>
+    <div>
+      <p>Имя: {{username}}</p>
+    </div>
+  </div>
+
+  <div>
+    <h2>Мои книги</h2>
+    <div>
+  <user-added-booklist></user-added-booklist>
+    </div>
+  </div>
+  <h2>Моя коллекция</h2>
+  <userbooklist></userbooklist>
+</div>

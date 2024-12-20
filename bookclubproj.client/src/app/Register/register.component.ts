@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 
 
@@ -21,17 +21,12 @@ export class RegisterComponent  {
     const registerData = {name: this.name, password: this.password};
     this.http.post('http://localhost:5011/api/auth/register', registerData).subscribe(
       (response) => {
-        console.log('Registration successful:', response);
+        alert('Регистрация прошла успешно, войдите в систему');
+        this.router.navigate(['/login']);
       },
-      (error) => {
-        console.error('Registration failed:', error);
-        // Выводим подробности ошибки
-        if (error.status) {
-          console.log('Error status:', error.status);  // Статус ошибки HTTP
-        }
-        if (error.error) {
-          console.log('Error message:', error.error);  // Сообщение об ошибке
-        }
+      (error: HttpErrorResponse) => {
+        console.log(error);
+        alert(`Ошибка регистрации: ${error.error.name[0]}`);
       }
     )
   }

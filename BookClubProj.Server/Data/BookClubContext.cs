@@ -9,6 +9,7 @@ namespace BookClubProj.Server.Data
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Book> Books { get; set; } = null!;
         public DbSet<ReadBook> ReadBooks { get; set; } = null!;
+        public DbSet<UsersAddedBook> UsersAddedBooks { get; set; } = null!;
         public BookClubContext(DbContextOptions<BookClubContext> options) : base(options)
         {
 

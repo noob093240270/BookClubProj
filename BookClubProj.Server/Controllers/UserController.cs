@@ -1,10 +1,15 @@
 ﻿using BookClubProj.Server.Data;
 using BookClubProj.Server.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace BookClubProj.Server.Controllers
 {
+    [Authorize]
+    [ApiController]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly BookClubContext _context;
@@ -14,36 +19,26 @@ namespace BookClubProj.Server.Controllers
             _context = context;
         }
 
-        /*[HttpPost("api/users/register")]
-        public IActionResult RegisterUser([FromBody] User user)
+
+        [HttpGet("name")]
+        public ActionResult GetUsername()
         {
-            if (_context.Users.Any(u => u.Name == user.Name))
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
+            if (userIdClaim == null)
             {
-                return BadRequest("Пользователь с таким именем уже существует");
+                return Unauthorized("Не удалось получить идентификатор пользователя");
             }
+            var userId = int.Parse(userIdClaim.Value);
 
-            var user1 = new User
+            var user = _context.Users.FirstOrDefault(u =>  u.Id == userId);
+            if (user == null)
             {
-                Name = user.Name,
-                Password = BCrypt.Net.BCrypt.HashPassword(user.Password)
-            };
+                return NotFound();
+            }
+            return Ok(new { user.Name } );
 
-            _context.Users.Add(user1);
-            _context.SaveChanges();
-            return Ok("Пользователь зарегистрирован");
         }
 
 
-
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] User name)
-        {
-            var user = _context.Users.FirstOrDefault(u => u.Name == name.Name);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(name.Password, user.Password))
-            {
-                return Unauthorized("Неверный логин или пароль");
-            }
-            return Ok(new { userId = user.Id, userLogin = user.Name });
-        }*/
     }
 }

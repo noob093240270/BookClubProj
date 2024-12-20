@@ -2,6 +2,7 @@
 using BookClubProj.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -20,7 +21,7 @@ namespace BookClubProj.Server.Controllers
         }
 
     
-        [HttpGet("books")]
+        [HttpGet("library/books")]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
         {
             var books = await _context.Books.ToListAsync();
@@ -36,6 +37,11 @@ namespace BookClubProj.Server.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddBookReadList([FromBody] AddedBook addedBook)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (addedBook == null || addedBook.BookId <= 0)
             {
                 return BadRequest("Неверные данные");
@@ -45,23 +51,24 @@ namespace BookClubProj.Server.Controllers
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
             if (userIdClaim == null)
             {
+                
                 return Unauthorized("Не удалось получить идентификатор пользователя");
             }
             var userId = userIdClaim.Value;
-
-            
-
-
-            if (await _context.ReadBooks.AnyAsync(rb => rb.UserId == addedBook.UserId && rb.BookId == addedBook.BookId))
-            {
-                return BadRequest("Книга уже добавлена");
-            }
             if (!int.TryParse(userId, out int parsedUserId))
             {
                 return Unauthorized("Неверный идентификатор пользователя");
             }
 
             addedBook.UserId = parsedUserId;
+
+            var existingBook = await _context.ReadBooks.FirstOrDefaultAsync(b => b.UserId == parsedUserId && b.BookId == addedBook.BookId);
+
+            if (existingBook != null)
+            {
+                ModelState.AddModelError("bookadded", "Эта книга уже добавлена в ваш список");
+                return BadRequest(ModelState);
+            }
 
 
             _context.ReadBooks.Add(
@@ -72,55 +79,13 @@ namespace BookClubProj.Server.Controllers
                 }
                 );
 
+            
+            var b = _context.Books.Where(b => b.Id == addedBook.BookId).First();
+            b.CountAddings += 1;
+
             await _context.SaveChangesAsync();
             return Ok(new { message = "книга добавлена" });
 
         }
-
-        /*
-        [HttpGet("get-user-id")]
-        public async Task<IActionResult> GetUserIdByUsername([FromQuery] string username)
-        {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Name == username);
-
-            if (user == null)
-            {
-                return NotFound("Пользователь не найден");
-            }
-
-            return Ok(user.Id);
-        }*/
-
-
-        /*
-        [HttpGet("user-books/{Id}")]
-        public async Task<IActionResult> GetUserBooks(int id)
-        {
-            var user = await _context.Users.Include(u => u.ReadBooks).FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return Ok(user.ReadBooks);
-        }
-
-       
-
-
-        [HttpPost("delete")]
-        public async Task<IActionResult> DeleteBookFromUser(int userId, int bookId)
-        {
-            var user = await _context.Users.Include(u => u.ReadBooks).FirstOrDefaultAsync(u => userId == u.Id);
-            var book = user.ReadBooks.FirstOrDefault(u => user.Id == bookId);
-            if (book == null || user == null)
-            {
-                return NotFound();
-            }
-            user.ReadBooks.Remove(book);
-
-            await _context.SaveChangesAsync();
-            return Ok();
-        }*/
     }
 }

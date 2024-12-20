@@ -8,14 +8,21 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import {AuthInterceptor} from './Login/auth.interceptor';
-import {HeaderComponent} from './Header/header.component';
-import {UserBookListComponent} from './UserBookList/userbooklist.component';
+import {HeaderComponent} from './MainPage/Header/header.component';
+import {UserBookListComponent} from './UserPage/UserBookList/userbooklist.component';
+import {MainPageComponent} from './MainPage/mainpage.component';
+import {UserPageComponent} from './UserPage/userpage.component';
+import  {LibraryComponent} from './Library/library.component';
+import {BookListComponent} from './Library/BookList/booklist.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    MainPageComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -24,6 +31,9 @@ import {UserBookListComponent} from './UserBookList/userbooklist.component';
     HttpClientModule,
     HeaderComponent,
     UserBookListComponent,
+    BookListComponent,
+    LibraryComponent,
+    UserPageComponent,
   ],
   providers: [
     {

@@ -4,7 +4,9 @@
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
+        public string Author { get; set; } = string.Empty ;
 
+        public int CountAddings { get; set; } = 0;
         public List<ReadBook> UsersReaded { get; set; } = new List<ReadBook>();
     }
 }

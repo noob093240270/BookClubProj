@@ -24,11 +24,11 @@ builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularApp", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("http://localhost:63503")  
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.AllowAnyOrigin()  // Разрешает все домены
+             .AllowAnyMethod()  // Разрешает все методы (GET, POST, и т.д.)
+             .AllowAnyHeader();
     });
 });
 
@@ -68,7 +68,7 @@ app.UseAuthentication();
 app.UseAuthorization();  
 
 
-app.UseCors("AllowAngularApp");
+app.UseCors("AllowAll");
 
 
 app.MapControllers(); 
